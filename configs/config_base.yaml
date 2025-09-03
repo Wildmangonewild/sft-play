@@ -1,0 +1,42 @@
+seed: 42
+run_name: run-01
+
+train:
+  epochs: 3
+  learning_rate: 2e-4
+  weight_decay: 0.01
+  lr_scheduler_type: cosine           # valid values: linear, cosine, cosine_with_restarts, polynomial, constant, constant_with_warmup
+  warmup_ratio: 0.06                  # or set num_warmup_steps instead
+  optim: adamw_torch
+
+  # precision & memory
+  bf16: true
+  fp16: false
+  gradient_checkpointing: true
+  batch_size: auto
+  grad_accum: auto
+
+  # logging / eval / save
+  logging_steps: 1                    # see frequent logs in TB
+  evaluation_strategy: steps          # HF name in 4.55 is evaluation_strategy
+  eval_steps: 1                       # tiny dataset -> evaluate every step
+  save_strategy: steps
+  save_steps: 10                      # save periodically without spamming
+  save_total_limit: 3
+  load_best_model_at_end: true
+  metric_for_best_model: eval_loss
+  greater_is_better: false
+
+  output_dir: outputs/run-01
+
+data:
+  format: chat
+  template_path: chat_templates/default.jinja
+  split:
+    train_ratio: 0.7
+    val_ratio: 0.1
+    test_ratio: 0.2
+
+logging:
+  backend: tensorboard
+  log_interval: 1
